@@ -4,7 +4,87 @@ import unittest
 import dateutil.parser
 from mock import patch, MagicMock
 
-from github_conglomerate.Github import RepoParser, OrgParser
+from github_conglomerate.Github import RepoParser, OrgParser, ConglomerateParser
+
+class TestConglomerateParser(unittest.TestCase):
+
+  def uninitialised_conglomerate(self):
+    return ConglomerateParser.__new__(ConglomerateParser)
+
+  @patch('github_conglomerate.Github.OrgParser')
+  def test_get_orgs(self, org_parser_mock):
+    conglomerate = self.uninitialised_conglomerate()
+    orgs = ['sanger-pathogens', 'wtsi-hgi']
+
+    conglomerate.get_orgs(orgs)
+    self.assertEqual(len(conglomerate.orgs), 2)
+    self.assertEqual(org_parser_mock.call_count, 2)
+
+  @patch('github_conglomerate.Github.OrgParser')
+  def test_to_dict(self, org_parser_mock):
+    conglomerate = self.uninitialised_conglomerate()
+
+    pathogens_org = MagicMock()
+    pathogens_org.to_dict.return_value = {
+      'repos': [
+        {
+          'name': 'json2email',
+          'organisation': 'sanger-pathogens'
+        },
+        {
+          'name': 'iva',
+          'organisation': 'sanger-pathogens'
+        }
+      ]
+    }
+
+    hgi_org = MagicMock()
+    hgi_org.to_dict.return_value = {
+      'repos': [
+        {
+          'name': 'docker-proxify',
+          'organisation': 'wtsi-hgi'
+        },
+        {
+          'name': 'bridgebuilder',
+          'organisation': 'wtsi-hgi'
+        }
+      ]
+    }
+
+    conglomerate.orgs = [pathogens_org, hgi_org]
+
+    def get_org(org):
+      lookup = {
+        'wtsi-hgi' : hgi_org,
+        'sanger-pathogens': pathogens_org
+      }
+      return lookup[org]
+
+    org_parser_mock.side_effect = get_org
+
+    expected_dict = {
+      'repos': [
+        {
+          'name': 'json2email',
+          'organisation': 'sanger-pathogens'
+        },
+        {
+          'name': 'iva',
+          'organisation': 'sanger-pathogens'
+        },
+        {
+          'name': 'docker-proxify',
+          'organisation': 'wtsi-hgi'
+        },
+        {
+          'name': 'bridgebuilder',
+          'organisation': 'wtsi-hgi'
+        }
+      ]
+    }
+
+    self.assertEqual(conglomerate.to_dict(), expected_dict)
 
 class TestOrgParser(unittest.TestCase):
 

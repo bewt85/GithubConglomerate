@@ -4,7 +4,30 @@ import dateutil.parser
 from github import Github
 
 
+class ConglomerateParser(object):
+
+  def __init__(self, orgs):
+    self.orgs = None
+    self.get_orgs(orgs)
+
+  def get_orgs(self, orgs):
+    self.orgs = [OrgParser(org) for org in orgs]
+
+  def to_dict(self):
+    def flatten_lists(lists):
+      # [[1,2,3], [4,5], [6], []] => [1,2,3,4,5,6]
+      return [e for l in lists for e in l]
+    org_repos = [org.to_dict()['repos'] for org in self.orgs]
+    return {
+      'repos': flatten_lists(org_repos)
+    }
+
 class OrgParser(object):
+
+  def __init__(self, org_name):
+    self.name = org_name
+    self.repos = None
+    self.get_repos(self.name)
 
   def get_repos(self, org_name):
     github_api = Github()
