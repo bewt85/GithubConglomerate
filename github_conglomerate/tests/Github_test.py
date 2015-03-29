@@ -16,7 +16,7 @@ class TestConglomerateParser(unittest.TestCase):
     conglomerate = self.uninitialised_conglomerate()
     orgs = ['sanger-pathogens', 'wtsi-hgi']
 
-    conglomerate.get_orgs(orgs)
+    conglomerate.get_orgs(orgs, None)
     self.assertEqual(len(conglomerate.orgs), 2)
     self.assertEqual(org_parser_mock.call_count, 2)
 
@@ -101,7 +101,7 @@ class TestOrgParser(unittest.TestCase):
     user_mock.get_repos.return_value = [repo_mock, repo_mock]
     get_user_mock.return_value = user_mock
 
-    org.get_repos('sanger-pathogens')
+    org.get_repos('sanger-pathogens', None)
 
     self.assertEqual(len(org.repos), 2)
     get_user_mock.assert_called_once_with('sanger-pathogens')
@@ -163,7 +163,8 @@ class TestRepoParser(unittest.TestCase):
     self.assertEqual(repo.forks_count, 1)
 
     release_mock.assert_called_once_with(
-      u'https://api.github.com/repos/sanger-pathogens/json2email'
+      u'https://api.github.com/repos/sanger-pathogens/json2email',
+      None
     )
 
   @patch('github_conglomerate.Github.requests.get')
@@ -184,7 +185,8 @@ class TestRepoParser(unittest.TestCase):
 
     repo = self.uninitialised_repo()
     repo.get_release_data(
-      u'https://api.github.com/repos/sanger-pathogens/json2email'
+      u'https://api.github.com/repos/sanger-pathogens/json2email',
+      None
     )
 
     self.assertEqual(repo.release_count, 2)
