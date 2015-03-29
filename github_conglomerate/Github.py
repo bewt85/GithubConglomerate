@@ -73,9 +73,14 @@ class RepoParser(object):
     def created_at(release):
       date_string = release['created_at']
       return dateutil.parser.parse(date_string)
-    latest_release = sorted(releases_data, key=created_at)[-1]
-    self.last_released = created_at(latest_release)
-    self.latest_release = latest_release['tag_name']
+    if releases_data:
+      latest_release = sorted(releases_data, key=created_at)[-1]
+      self.last_released = created_at(latest_release)
+      self.latest_release = latest_release['tag_name']
+    else:
+      # There haven't been any releases (yet)
+      self.last_released = None
+      self.latest_release = None
 
   def to_dict(self):
     params_to_return = [

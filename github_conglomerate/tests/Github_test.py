@@ -196,6 +196,26 @@ class TestRepoParser(unittest.TestCase):
     )
     self.assertEqual(repo.latest_release, u'release/0.0.6')
 
+  @patch('github_conglomerate.Github.requests.get')
+  def test_get_release_data_no_releases(self, requests_mock):
+    response_mock = MagicMock()
+    response_mock.json.return_value = []
+
+    requests_mock.return_value = response_mock
+
+    repo = self.uninitialised_repo()
+    repo.get_release_data(
+      u'https://api.github.com/repos/sanger-pathogens/BioPericles',
+      None
+    )
+
+    self.assertEqual(repo.release_count, 0)
+    self.assertEqual(
+      repo.last_released,
+      None
+    )
+    self.assertEqual(repo.latest_release, None)
+
 
   def test_to_dict(self):
     repo = self.uninitialised_repo()
