@@ -12,6 +12,11 @@ class OrgParser(object):
     repos = user.get_repos()
     self.repos = map(RepoParser, repos)
 
+  def to_dict(self):
+    return {
+      'repos': [repo.to_dict() for repo in self.repos]
+    }
+
 class RepoParser(object):
 
   def __init__(self, repo):

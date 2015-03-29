@@ -27,6 +27,21 @@ class TestOrgParser(unittest.TestCase):
     get_user_mock.assert_called_once_with('sanger-pathogens')
     self.assertEqual(repo_parser_mock.call_count, 2)
 
+  def test_to_dict(self):
+    org = self.uninitialised_org()
+    repo_mock = MagicMock()
+    repo_mock.to_dict.return_value = {'some': 'data'}
+    org.repos = [repo_mock, repo_mock]
+
+    expected_response = {
+      'repos': [
+        {'some': 'data'},
+        {'some': 'data'}
+      ]
+    }
+
+    self.assertEqual(org.to_dict(), expected_response)
+
 class TestRepoParser(unittest.TestCase):
 
   def uninitialised_repo(self):
