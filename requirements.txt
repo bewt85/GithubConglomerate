@@ -2,3 +2,5 @@ PyGithub
 mock
 python-dateutil
 requests
+PyYAML
+argparse
