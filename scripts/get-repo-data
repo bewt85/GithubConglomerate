@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+
+import argparse
+import datetime
+import json
+import sys
+import os
+
+from argparse import FileType, RawTextHelpFormatter
+
+from github_conglomerate.Config import ConfigParser
+from github_conglomerate.Github import ConglomerateParser
+
+def stderr(text):
+  print >> sys.stderr, text
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
+  parser.add_argument('--config', '-c', nargs='*', type=FileType(mode='r'),
+                      default=[],
+                      help="Yaml formatted config files")
+  parser.add_argument('--orgs', nargs='*', default=[],
+                      help="Which organisations you want data for")
+  parser.add_argument('--github', '-g', nargs='?', type=str,
+                      help="Github token; helps with rate limiting")
+  parser.add_argument('--output', '-o', nargs='?', type=FileType(mode='w'),
+                     help="Output file path, defaults to stdout")
+
+  parser.description = """\
+Downloads details of organisations github repos and outputs it in \
+json format
+"""
+  parser.epilog = """\
+The following config is used by this script:
+  github_token: to get around rate limiting / access private repos
+  organisations: the organisations you want to download data for
+
+Config is loaded from the following places.  In the case of conflicts, \
+the source higher in this list 'wins':
+
+  Command line arguments
+  Environment variables
+  Config files (last file wins)
+
+NB in the case of organisations, there are no conflicts.  The results from \
+different sources are added together.
+"""
+
+  args = parser.parse_args()
+  config = ConfigParser()
+  for config_file in args.config:
+    filename = config_file.name
+    path = os.path.abspath(filename)
+    config.add_from_file(path)
+  config.add_from_environment()
+  config.add_github_token(args.github)
+  config.add_organisations(args.orgs)
+
+  summary = """\
+Using the following config:
+  github_token: {github_token}
+  organisations: {organisations}
+""".format(
+      github_token=config.github_token, 
+      organisations=";".join(config.organisations)
+    )
+  stderr(summary)
+
+  conglomerate = ConglomerateParser(config.organisations, config.github_token)
+
+  data = conglomerate.to_dict()
+  data['created_at'] = datetime.datetime.now()
+
+  def stringify_datetime(obj):
+    if isinstance(obj, datetime.datetime):
+      return obj.isoformat()
+
+  json_output = json.dumps(data, default=stringify_datetime)
+  
+  if args.output:
+    args.output.write(json_output)
+  else:
+    print json_output
