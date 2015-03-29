@@ -31,4 +31,17 @@ class RepoParser(object):
     self.latest_release = latest_release['tag_name']
 
   def to_dict(self):
-    pass
+    params_to_return = [
+      "name",
+      "description",
+      "html_url",
+      "updated_at",
+      "stargazers_count",
+      "forks_count",
+      "release_count",
+      "last_released",
+      "latest_release"
+    ]
+    return {
+      param: self.__getattribute__(param) for param in params_to_return
+    }

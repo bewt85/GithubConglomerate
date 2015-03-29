@@ -73,3 +73,34 @@ class TestRepoParser(unittest.TestCase):
       dateutil.parser.parse(u'2015-03-28T16:58:12Z')
     )
     self.assertEqual(repo.latest_release, u'release/0.0.6')
+
+
+  def test_to_dict(self):
+    repo = self.uninitialised_repo()
+
+    repo.description = u'Takes a jinja2 template and some json and sends an email'
+    repo.forks_count = 1
+    repo.html_url = u'https://github.com/sanger-pathogens/json2email'
+    repo.name = u'json2email'
+    repo.stargazers_count = 1
+    repo.updated_at = datetime.datetime(2015, 3, 28, 16, 58, 12)
+    repo.url = u'https://api.github.com/repos/sanger-pathogens/json2email'
+    repo.release_count = 3
+    repo.last_released = datetime.datetime(2015, 3, 28, 16, 58, 12)
+    repo.latest_release = u'release/0.0.6'
+
+    expected = {
+      "description": u'Takes a jinja2 template and some json and sends an email',
+      "forks_count": 1,
+      "html_url": u'https://github.com/sanger-pathogens/json2email',
+      "name": u'json2email',
+      "stargazers_count": 1,
+      "updated_at": datetime.datetime(2015, 3, 28, 16, 58, 12),
+      "release_count": 3,
+      "last_released": datetime.datetime(2015, 3, 28, 16, 58, 12),
+      "latest_release": u'release/0.0.6'
+    }
+
+    repo_dict = repo.to_dict()
+    self.assertItemsEqual(repo_dict.keys(), expected.keys())
+    self.assertEqual(repo.to_dict(), expected)
