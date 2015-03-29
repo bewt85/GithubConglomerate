@@ -3,12 +3,16 @@ import yaml
 
 class ConfigParser(object):
   def __init__(self):
+    self.aws_token = None
     self.github_token = None
     self.organisations = []
 
   def add_from_file(self, path):
     with open(path, 'r') as config_file:
       new_config = yaml.load(config_file)
+
+    new_aws_token = new_config.get('aws_token')
+    self.add_aws_token(new_aws_token)
 
     new_github_token = new_config.get('github_token')
     self.add_github_token(new_github_token)
@@ -17,6 +21,9 @@ class ConfigParser(object):
     self.add_organisations(new_organisations)
 
   def add_from_environment(self):
+    new_aws_token = os.environ.get('aws_token')
+    self.add_aws_token(new_aws_token)
+
     new_github_token = os.environ.get('github_token')
     self.add_github_token(new_github_token)
 
@@ -27,6 +34,10 @@ class ConfigParser(object):
       organisations = org_string.split(':')
       return [org.strip() for org in organisations if org]
     self.add_organisations(split_and_filter(new_organisations))
+
+  def add_aws_token(self, aws_token):
+    if aws_token:
+      self.aws_token = aws_token
 
   def add_github_token(self, github_token):
     if github_token:

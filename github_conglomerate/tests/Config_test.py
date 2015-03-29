@@ -23,6 +23,7 @@ class TestConfig(unittest.TestCase):
   github_organisations:
     - sanger-pathogens
     - wtsi-hgi
+  aws_token: secret_aws_token
 """
     fake_config_file = StringIO(fake_config)
     open_mock.return_value.__enter__.return_value = fake_config_file
@@ -32,6 +33,7 @@ class TestConfig(unittest.TestCase):
     parser.add_from_file('/home/file.yaml')
 
     self.assertEqual(parser.github_token, 'secret_github_token')
+    self.assertEqual(parser.aws_token, 'secret_aws_token')
     self.assertItemsEqual(
       parser.organisations,
       ['sanger-pathogens', 'wtsi-hgi']
@@ -127,12 +129,14 @@ class TestConfig(unittest.TestCase):
     parser = ConfigParser()
 
     environ_mock.get.side_effect = self.environment_get_mock({
+      'aws_token': 'secret_aws_token',
       'github_token': 'secret_github_token',
       'github_organisations': 'sanger-pathogens'
     })
 
     parser.add_from_environment()
 
+    self.assertEqual(parser.aws_token, 'secret_aws_token')
     self.assertEqual(parser.github_token, 'secret_github_token')
     self.assertItemsEqual(
       parser.organisations,
