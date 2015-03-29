@@ -5,6 +5,7 @@ import dateutil.parser
 from mock import patch, MagicMock
 
 from github_conglomerate.Github import RepoParser, OrgParser, ConglomerateParser
+from github_conglomerate.Github import RateLimitedException
 
 class TestConglomerateParser(unittest.TestCase):
 
@@ -216,6 +217,25 @@ class TestRepoParser(unittest.TestCase):
     )
     self.assertEqual(repo.latest_release, None)
 
+  @patch('github_conglomerate.Github.requests.get')
+  def test_get_release_data_rate_limited(self, requests_mock):
+    response_mock = MagicMock()
+    response_mock.json.return_value = {
+      u'documentation_url': u'https://developer.github.com/v3/#rate-limiting',
+      u'message': u"API rate limit exceeded for xx.xx.xx.xx. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)"
+    }
+    response_mock.status_code = 403
+
+    requests_mock.return_value = response_mock
+
+    repo = self.uninitialised_repo()
+
+    self.assertRaises(
+      RateLimitedException,
+      repo.get_release_data,
+      u'https://api.github.com/repos/sanger-pathogens/BioPericles',
+      None
+    )
 
   def test_to_dict(self):
     repo = self.uninitialised_repo()

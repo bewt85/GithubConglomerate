@@ -1,8 +1,39 @@
 import requests
 import dateutil.parser
 
-from github import Github
+from github import Github, GithubException
 
+class RateLimitedException(Exception):
+  def __init__(self, url, status_code, content):
+    if url == None:
+      message_template = """\
+It looks like you tried to do something unauthorised against the \
+Github API.  Normally this is just due to rate limiting but it \
+could be because you tried to access a repo you shouldn't have. \
+If you're not already using an api_token, using one might help.
+Response details below:
+  status: {status_code}
+  content: {content}
+"""
+    else:
+      message_template = """\
+It looks like you tried to do something unauthorised against the \
+Github API.  Normally this is just due to rate limiting but it \
+could be because you tried to access a repo you shouldn't have. \
+If you're not already using an api_token, using one might help.
+Response details below:
+  url: {url}
+  status: {status_code}
+  content: {content}
+"""
+    self.message = message_template.format(url=url, status_code=status_code,
+                                           content=str(content))
+    self.url = url
+    self.status = status_code
+    self.content = content
+
+  def __str__(self):
+    return self.message
 
 class ConglomerateParser(object):
 
@@ -29,7 +60,10 @@ class OrgParser(object):
     self.name = org_name
     self.api_token = api_token
     self.repos = None
-    self.get_repos(self.name, self.api_token)
+    try:
+      self.get_repos(self.name, self.api_token)
+    except GithubException as e:
+      raise RateLimitedException(None, e.status, e.data)
 
   def get_repos(self, org_name, api_token):
     github_api = Github(api_token) if api_token else Github()
@@ -68,7 +102,10 @@ class RepoParser(object):
       headers = {'Authorization': 'token %s' % api_token}
     else:
       headers = {}
-    releases_data = requests.get(releases_url, headers=headers).json()
+    response = requests.get(releases_url, headers=headers)
+    if response.status_code == 403:
+      raise RateLimitedException(url, response.status_code, response.json())
+    releases_data = response.json()
     self.release_count = len(releases_data)
     def created_at(release):
       date_string = release['created_at']
