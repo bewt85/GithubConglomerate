@@ -32,11 +32,18 @@ class TestOrgParser(unittest.TestCase):
     repo_mock = MagicMock()
     repo_mock.to_dict.return_value = {'some': 'data'}
     org.repos = [repo_mock, repo_mock]
+    org.name = 'sanger-pathogens'
 
     expected_response = {
       'repos': [
-        {'some': 'data'},
-        {'some': 'data'}
+        {
+          'some': 'data',
+          'organisation': 'sanger-pathogens'
+        },
+        {
+          'some': 'data',
+          'organisation': 'sanger-pathogens'
+        }
       ]
     }
 

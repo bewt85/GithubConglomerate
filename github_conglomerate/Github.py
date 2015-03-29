@@ -11,10 +11,15 @@ class OrgParser(object):
     user = github_api.get_user(org_name)
     repos = user.get_repos()
     self.repos = map(RepoParser, repos)
+    self.name = org_name
 
   def to_dict(self):
+    repos = [repo.to_dict() for repo in self.repos]
+    def add_org_name(repo):
+      repo['organisation'] = self.name
+      return repo
     return {
-      'repos': [repo.to_dict() for repo in self.repos]
+      'repos': map(add_org_name, repos)
     }
 
 class RepoParser(object):
