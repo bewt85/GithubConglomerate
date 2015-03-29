@@ -1,9 +1,16 @@
 import requests
 import dateutil.parser
 
+from github import Github
+
 
 class OrgParser(object):
-  pass
+
+  def get_repos(self, org_name):
+    github_api = Github()
+    user = github_api.get_user(org_name)
+    repos = user.get_repos()
+    self.repos = map(RepoParser, repos)
 
 class RepoParser(object):
 

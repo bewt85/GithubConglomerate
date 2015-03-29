@@ -4,10 +4,28 @@ import unittest
 import dateutil.parser
 from mock import patch, MagicMock
 
-from github_conglomerate.Github import RepoParser
+from github_conglomerate.Github import RepoParser, OrgParser
 
 class TestOrgParser(unittest.TestCase):
-  pass
+
+  def uninitialised_org(self):
+    return OrgParser.__new__(OrgParser)
+
+  @patch('github_conglomerate.Github.RepoParser')
+  @patch('github_conglomerate.Github.Github.get_user')
+  def test_get_repos(self, get_user_mock, repo_parser_mock):
+    org = self.uninitialised_org()
+
+    repo_mock = MagicMock()
+    user_mock = MagicMock()
+    user_mock.get_repos.return_value = [repo_mock, repo_mock]
+    get_user_mock.return_value = user_mock
+
+    org.get_repos('sanger-pathogens')
+
+    self.assertEqual(len(org.repos), 2)
+    get_user_mock.assert_called_once_with('sanger-pathogens')
+    self.assertEqual(repo_parser_mock.call_count, 2)
 
 class TestRepoParser(unittest.TestCase):
 
