@@ -7,6 +7,11 @@ from github_conglomerate.Config import ConfigParser
 
 class TestConfig(unittest.TestCase):
 
+  def environment_get_mock(self, fake_env):
+    def get(key):
+      return fake_env.get(key)
+    return get
+
   @patch('github_conglomerate.Config.os.environ')
   @patch('github_conglomerate.Config.open', create=True)
   def test_from_file(self, open_mock, environ_mock):
@@ -22,7 +27,7 @@ class TestConfig(unittest.TestCase):
     fake_config_file = StringIO(fake_config)
     open_mock.return_value.__enter__.return_value = fake_config_file
 
-    environ_mock = {}
+    environ_mock.get.side_effect = self.environment_get_mock({})
 
     parser.add_from_file('/home/file.yaml')
 
@@ -47,7 +52,7 @@ class TestConfig(unittest.TestCase):
     fake_config_file = StringIO(fake_config)
     open_mock.return_value.__enter__.return_value = fake_config_file
 
-    environ_mock = {}
+    environ_mock.get.side_effect = self.environment_get_mock({})
 
     parser.add_from_file('/home/file.yaml')
 
@@ -87,7 +92,7 @@ class TestConfig(unittest.TestCase):
     fake_config_file = StringIO(fake_config)
     open_mock.return_value.__enter__.return_value = fake_config_file
 
-    environ_mock = {}
+    environ_mock.get.side_effect = self.environment_get_mock({})
 
     parser.add_from_file('/home/file.yaml')
 
@@ -108,10 +113,109 @@ class TestConfig(unittest.TestCase):
     fake_config_file = StringIO(fake_config)
     open_mock.return_value.__enter__.return_value = fake_config_file
 
-    environ_mock = {}
+    environ_mock.get.side_effect = self.environment_get_mock({})
 
     parser.add_from_file('/home/file.yaml')
 
+    self.assertItemsEqual(
+      parser.organisations,
+      ['sanger-pathogens']
+    )
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment(self, environ_mock):
+    parser = ConfigParser()
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_api_token': 'secret_token',
+      'github_organisations': 'sanger-pathogens'
+    })
+
+    parser.add_from_environment()
+
+    self.assertEqual(parser.api_token, 'secret_token')
+    self.assertItemsEqual(
+      parser.organisations,
+      ['sanger-pathogens']
+    )
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment_multi_org(self, environ_mock):
+    parser = ConfigParser()
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_organisations': 'sanger-pathogens:wtsi-hgi'
+    })
+
+    parser.add_from_environment()
+
+    self.assertItemsEqual(
+      parser.organisations,
+      ['sanger-pathogens', 'wtsi-hgi']
+    )
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment_multi_org_bad_prefix(self, environ_mock):
+    parser = ConfigParser()
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_organisations': ':sanger-pathogens:wtsi-hgi'
+    })
+
+    parser.add_from_environment()
+
+    self.assertEqual(
+      parser.organisations,
+      ['sanger-pathogens', 'wtsi-hgi']
+    )
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment_add_data(self, environ_mock):
+    parser = ConfigParser()
+
+    parser.organisations = ['wtsi-hgi']
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_api_token': 'secret_token',
+      'github_organisations': 'sanger-pathogens'
+    })
+
+    parser.add_from_environment()
+
+    self.assertEqual(parser.api_token, 'secret_token')
+    self.assertItemsEqual(
+      parser.organisations,
+      ['sanger-pathogens', 'wtsi-hgi']
+    )
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment_update_data(self, environ_mock):
+    parser = ConfigParser()
+
+    parser.api_token = 'secret_token'
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_api_token': 'another_token',
+    })
+
+    parser.add_from_environment()
+
+    self.assertEqual(parser.api_token, 'another_token')
+
+  @patch('github_conglomerate.Config.os.environ')
+  def test_from_enviornment_duplicate(self, environ_mock):
+    parser = ConfigParser()
+
+    parser.organisations = ['sanger-pathogens']
+
+    environ_mock.get.side_effect = self.environment_get_mock({
+      'github_api_token': 'secret_token',
+      'github_organisations': 'sanger-pathogens'
+    })
+
+    parser.add_from_environment()
+
+    self.assertEqual(parser.api_token, 'secret_token')
     self.assertItemsEqual(
       parser.organisations,
       ['sanger-pathogens']
