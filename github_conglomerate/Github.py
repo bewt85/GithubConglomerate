@@ -53,6 +53,7 @@ class RepoParser(object):
     self.name = repo.name
     self.description = repo.description
     self.html_url = repo.html_url
+    self.created_at = repo.created_at
     self.updated_at = repo.updated_at
     self.stargazers_count = repo.stargazers_count
     self.forks_count = repo.forks_count
@@ -81,6 +82,7 @@ class RepoParser(object):
       "name",
       "description",
       "html_url",
+      "created_at",
       "updated_at",
       "stargazers_count",
       "forks_count",

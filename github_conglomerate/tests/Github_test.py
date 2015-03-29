@@ -205,6 +205,7 @@ class TestRepoParser(unittest.TestCase):
     repo.html_url = u'https://github.com/sanger-pathogens/json2email'
     repo.name = u'json2email'
     repo.stargazers_count = 1
+    repo.created_at = datetime.datetime(2015, 3, 25, 11, 16, 25)
     repo.updated_at = datetime.datetime(2015, 3, 28, 16, 58, 12)
     repo.url = u'https://api.github.com/repos/sanger-pathogens/json2email'
     repo.release_count = 3
@@ -217,6 +218,7 @@ class TestRepoParser(unittest.TestCase):
       "html_url": u'https://github.com/sanger-pathogens/json2email',
       "name": u'json2email',
       "stargazers_count": 1,
+      "created_at": datetime.datetime(2015, 3, 25, 11, 16, 25),
       "updated_at": datetime.datetime(2015, 3, 28, 16, 58, 12),
       "release_count": 3,
       "last_released": datetime.datetime(2015, 3, 28, 16, 58, 12),
