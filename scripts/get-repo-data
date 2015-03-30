@@ -73,7 +73,7 @@ Using the following config:
 
   def stringify_datetime(obj):
     if isinstance(obj, datetime.datetime):
-      return obj.isoformat()
+      return obj.strftime('%Y-%m-%dT%H:%M:%S')
 
   json_output = json.dumps(data, default=stringify_datetime)
   
