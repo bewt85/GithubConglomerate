@@ -101,3 +101,11 @@ class Repos(object):
           return -cmp(valueA, valueB)
       repos = sorted(repos, cmp=cmp_function)
     return repos
+
+  def filter_contains(self, repos, **kwargs):
+    repos = repos[:]
+    for attribute, value in kwargs.items():
+      def filter_function(repo):
+        return value.lower() in repo.get(attribute, '').lower()
+      repos = filter(filter_function, repos)
+    return repos

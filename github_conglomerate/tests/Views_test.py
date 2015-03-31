@@ -131,3 +131,50 @@ class TestRepos(unittest.TestCase):
     ]
 
     self.assertEqual(repos.sorted_by(data, 'score', 'foo'), expected)
+
+  def test_filter_contains(self):
+    repos = Repos()
+    data = [
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'baz',
+        'another': 'BAZ',
+        'score': 2
+      },
+      { 'another': 'baz' }
+    ]
+
+    expected = [
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'baz',
+        'another': 'BAZ',
+        'score': 2
+      }
+    ]
+
+    self.assertEqual(data[0]['foo'], 'foo', "Original data unaffected")
+    self.assertEqual(repos.filter_contains(data, foo='a'), expected)
+
+    expected = [
+      {
+        'foo': 'baz',
+        'another': 'BAZ',
+        'score': 2
+      }
+    ]
+
+    self.assertEqual(
+      repos.filter_contains(data, foo='a', another='A'),
+      expected
+    )
