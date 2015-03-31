@@ -1,0 +1,78 @@
+import unittest
+
+from datetime import datetime
+
+from github_conglomerate.Views import Repos
+
+class TestRepos(unittest.TestCase):
+
+  def test_load_json(self):
+    
+    json_data = """\
+{
+  "created_at": "2015-03-30T23:26:03",
+  "repos": [
+    {
+      "created_at": "2014-04-30T09:44:21",
+      "description": "de novo virus assembler of Illumina paired reads",
+      "forks_count": 1,
+      "html_url": "https://github.com/sanger-pathogens/iva",
+      "last_released": "2015-03-27T11:36:49",
+      "latest_release": "v0.11.5",
+      "name": "iva",
+      "organisation": "sanger-pathogens",
+      "release_count": 19,
+      "stargazers_count": 2,
+      "updated_at": "2015-03-27T11:36:49"
+    },
+    {
+      "created_at": "2015-03-25T11:16:25",
+      "description": "Takes a jinja2 template and some json and sends an email",
+      "forks_count": 1,
+      "html_url": "https://github.com/sanger-pathogens/json2email",
+      "last_released": "2015-03-28T16:58:12",
+      "latest_release": "release/0.0.6",
+      "name": "json2email",
+      "organisation": "sanger-pathogens",
+      "release_count": 2,
+      "stargazers_count": 1,
+      "updated_at": "2015-03-28T16:58:12"
+    }
+  ]
+}"""
+
+    repos = Repos()
+    repos.load_json(json_data)
+
+    self.assertEqual(repos.created_at, datetime(2015, 3, 30, 23, 26, 3))
+
+    expected_data = [
+      {
+        "created_at": datetime(2014, 4, 30, 9, 44, 21),
+        "description": "de novo virus assembler of Illumina paired reads",
+        "forks_count": 1,
+        "html_url": "https://github.com/sanger-pathogens/iva",
+        "last_released": datetime(2015, 3, 27, 11, 36, 49),
+        "latest_release": "v0.11.5",
+        "name": "iva",
+        "organisation": "sanger-pathogens",
+        "release_count": 19,
+        "stargazers_count": 2,
+        "updated_at": datetime(2015, 3, 27, 11, 36, 49)
+      },
+      {
+        "created_at": datetime(2015, 3, 25, 11, 16, 25),
+        "description": "Takes a jinja2 template and some json and sends an email",
+        "forks_count": 1,
+        "html_url": "https://github.com/sanger-pathogens/json2email",
+        "last_released": datetime(2015, 3, 28, 16, 58, 12),
+        "latest_release": "release/0.0.6",
+        "name": "json2email",
+        "organisation": "sanger-pathogens",
+        "release_count": 2,
+        "stargazers_count": 1,
+        "updated_at": datetime(2015, 3, 28, 16, 58, 12)
+      }
+    ]
+
+    self.assertEqual(repos.data, expected_data)
