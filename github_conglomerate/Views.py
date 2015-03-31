@@ -82,3 +82,22 @@ class Repos(object):
       return 1
     else:
       return 0
+
+  def sorted_by(self, repos, *args):
+    repos = repos[:]
+    if args == []:
+      args = ['score']
+    for attribute in args[-1::-1]:
+      def cmp_function(repoA, repoB):
+        valueA = repoA.get(attribute)
+        valueB = repoB.get(attribute)
+        if valueB == None:
+          return -1
+        elif valueA == None:
+          return 1
+        elif isinstance(valueA, str):
+          return cmp(valueA, valueB)
+        else:
+          return -cmp(valueA, valueB)
+      repos = sorted(repos, cmp=cmp_function)
+    return repos

@@ -7,7 +7,7 @@ from github_conglomerate.Views import Repos
 class TestRepos(unittest.TestCase):
 
   def test_load_json(self):
-    
+
     json_data = """\
 {
   "created_at": "2015-03-30T23:26:03",
@@ -76,3 +76,58 @@ class TestRepos(unittest.TestCase):
     ]
 
     self.assertEqual(repos.data, expected_data)
+
+  def test_sorted_by(self):
+    repos = Repos()
+    data = [
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'baz',
+        'score': 2
+      },
+      { 'another': 'thing' }
+    ]
+
+    expected = [
+      {
+        'foo': 'baz',
+        'score': 2
+      },
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      { 'another': 'thing' }
+    ]
+
+    self.assertEqual(data[0]['foo'], 'foo', "Original data unaffected")
+    self.assertEqual(repos.sorted_by(data, 'score'), expected)
+
+    expected = [
+      {
+        'foo': 'baz',
+        'score': 2
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      { 'another': 'thing' }
+    ]
+
+    self.assertEqual(repos.sorted_by(data, 'score', 'foo'), expected)
