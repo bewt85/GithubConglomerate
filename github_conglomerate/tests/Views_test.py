@@ -178,3 +178,47 @@ class TestRepos(unittest.TestCase):
       repos.filter_contains(data, foo='a', another='A'),
       expected
     )
+
+  def test_join(self):
+    repos = Repos()
+
+    data = [
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      }
+    ]
+
+    other_data = [
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'baz',
+        'score': 2
+      },
+      { 'another': 'thing' }
+    ]
+
+    expected = [
+      {
+        'foo': 'foo',
+        'score': 1
+      },
+      {
+        'foo': 'bar',
+        'score': 1
+      },
+      {
+        'foo': 'baz',
+        'score': 2
+      },
+      { 'another': 'thing' }
+    ]
+
+    self.assertItemsEqual(repos.join(data, other_data), expected)

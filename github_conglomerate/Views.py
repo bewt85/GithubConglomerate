@@ -109,3 +109,9 @@ class Repos(object):
         return value.lower() in repo.get(attribute, '').lower()
       repos = filter(filter_function, repos)
     return repos
+
+  def join(self, repos, other_repos):
+    repos = [tuple(repo.items()) for repo in repos[:]]
+    other_repos = [tuple(repo.items()) for repo in other_repos[:]]
+    joint_repos = list(set(repos + other_repos))
+    return [{k: v for k,v in repo} for repo in joint_repos]
