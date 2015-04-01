@@ -98,9 +98,6 @@ or
 TODO
 ----
 
-- save data to S3
-- load data from S3
-- make it bootstrap-py
 - deploy to heroku
 - get Travis working
 - setup a cron job to update the data (daily?)

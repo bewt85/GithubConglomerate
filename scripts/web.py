@@ -9,7 +9,7 @@ from github_conglomerate.Views import Repos
 
 parent_folder = os.path.abspath(os.path.dirname(__file__))
 template_folder = os.path.join(parent_folder, 'static', 'templates')
-path_to_data = os.path.join(parent_folder, '..', 'example_output.json')
+path_to_data = os.path.join(parent_folder, '..', 'all_output.json')
 
 app = Flask(__name__, template_folder=template_folder)
 
