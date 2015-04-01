@@ -12,9 +12,13 @@ this_year = now - timedelta(days=365)
 
 class Repos(object):
 
-  def __init__(self):
+  def __init__(self, json_data='{}'):
     self.created_at = None
-    self.data = []
+    self.load_json(json_data)
+    for repo in self.data:
+      self.fix_datetimes(repo)
+      self.score_repo(repo)
+    self.data = self.sorted_by(self.data, 'score')
 
   def fix_datetimes(self, repo):
     datetime_attributes = [

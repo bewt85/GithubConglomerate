@@ -6,6 +6,9 @@ from github_conglomerate.Views import Repos
 
 class TestRepos(unittest.TestCase):
 
+  def uninitialised_repos(self):
+    return Repos.__new__(Repos)
+
   def test_load_json(self):
 
     json_data = """\
@@ -41,7 +44,7 @@ class TestRepos(unittest.TestCase):
   ]
 }"""
 
-    repos = Repos()
+    repos = self.uninitialised_repos()
     repos.load_json(json_data)
 
     self.assertEqual(repos.created_at, datetime(2015, 3, 30, 23, 26, 3))
@@ -78,7 +81,7 @@ class TestRepos(unittest.TestCase):
     self.assertEqual(repos.data, expected_data)
 
   def test_sorted_by(self):
-    repos = Repos()
+    repos = self.uninitialised_repos()
     data = [
       {
         'foo': 'foo',
@@ -133,7 +136,7 @@ class TestRepos(unittest.TestCase):
     self.assertEqual(repos.sorted_by(data, 'score', 'foo'), expected)
 
   def test_filter_contains(self):
-    repos = Repos()
+    repos = self.uninitialised_repos()
     data = [
       {
         'foo': 'foo',
@@ -180,7 +183,7 @@ class TestRepos(unittest.TestCase):
     )
 
   def test_join(self):
-    repos = Repos()
+    repos = self.uninitialised_repos()
 
     data = [
       {

@@ -20,10 +20,7 @@ def index():
                          created_at=repos.created_at)
 
 if __name__ == '__main__':
-  repos = Repos()
   with open(path_to_data, 'r') as data_file:
-    repos.load_json(data_file.read())
-  for repo in repos.data:
-    repos.score_repo(repo)
+    repos = Repos(data_file.read())
 
   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
