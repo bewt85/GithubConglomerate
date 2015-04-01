@@ -4,3 +4,9 @@ python-dateutil
 requests
 PyYAML
 argparse
+Flask
+Jinja2
+MarkupSafe
+Werkzeug
+itsdangerous
+wsgiref

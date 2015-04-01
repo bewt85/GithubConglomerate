@@ -9,7 +9,7 @@ from github_conglomerate.Views import Repos
 
 parent_folder = os.path.abspath(os.path.dirname(__file__))
 template_folder = os.path.join(parent_folder, 'static', 'templates')
-path_to_data = os.path.join(parent_folder, '..', 'example_output.json')
+path_to_data = os.path.join(parent_folder, '..', 'all_output.json')
 
 app = Flask(__name__, template_folder=template_folder)
 
@@ -20,10 +20,7 @@ def index():
                          created_at=repos.created_at)
 
 if __name__ == '__main__':
-  repos = Repos()
   with open(path_to_data, 'r') as data_file:
-    repos.load_json(data_file.read())
-  for repo in repos.data:
-    repos.score_repo(repo)
+    repos = Repos(data_file.read())
 
   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

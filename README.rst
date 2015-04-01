@@ -7,6 +7,13 @@ This will create a little Heroku hostable web app which uses the Github API to g
 
 The script is outlined below which collected the required data and puts it into a json formatted file.  This should then be made accessible via a URL which a simple web app will query on startup.
 
+Things you could help with
+--------------------------
+
+- The scoring algorithm for repos is a bit arbitrary.  A second opinion on `Repos.score_repo <https://github.com/bewt85/GithubConglomerate/blob/master/github_conglomerate/Views.py>`_ would be great.
+- I'm not sure I've got a very complete list of repos.  Feel free to `suggest some more <https://github.com/bewt85/GithubConglomerate/blob/master/example_config.yaml>`_ via a Pull Request.
+- I'm not very good at CSS, HTML, Javascript.  Any `suggestions for improvements <https://github.com/bewt85/GithubConglomerate/blob/master/scripts/static/templates/index.html>`_ would be great or perhaps you could suggest a book to improve my skills?
+
 Usage
 -----
 
@@ -98,9 +105,6 @@ or
 TODO
 ----
 
-- save data to S3
-- load data from S3
-- make it bootstrap-py
 - deploy to heroku
 - get Travis working
 - setup a cron job to update the data (daily?)
