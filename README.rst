@@ -3,7 +3,9 @@ github_conglomerate
 
 Some organisations choose to give each team their own github organisation to simplify administration.  This is a bit of a pain when trying to find interesting software to reuse.  Github's tools to sort / compare repos are a bit limited.
 
-This will create a little Heroku hostable web app which uses the Github API to get a list of repos for each 'Github organisation' and amalgamate them into one nice view.
+This creates a little Heroku hostable web app which uses the Github API to get a list of repos for each 'Github organisation' and amalgamate them into one nice view.
+
+For example, you can see many of the `Wellcome Trust Sanger Institute's repos <https://github-conglomerate.herokuapp.com/>`_ here.
 
 The script is outlined below which collected the required data and puts it into a json formatted file.  This should then be made accessible via a URL which a simple web app will query on startup.
 
