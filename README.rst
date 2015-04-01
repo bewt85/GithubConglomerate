@@ -5,9 +5,7 @@ Some organisations choose to give each team their own github organisation to sim
 
 This will create a little Heroku hostable web app which uses the Github API to get a list of repos for each 'Github organisation' and amalgamate them into one nice view.
 
-This data can be stored locally or on Amazon S3; the latter being preferable on Heroku because they recycle containers regularly.
-
-At the moment I've only got the bits to download the data working; I've not done any web development or AWS bits yet.
+The script is outlined below which collected the required data and puts it into a json formatted file.  This should then be made accessible via a URL which a simple web app will query on startup.
 
 Usage
 -----
@@ -75,6 +73,15 @@ You can also load data from YAML config files as follows:
   - sanger-pathogens
   - wtsi-hgi
 
+Web App
+-------
+
+The web app is pretty simple at the moment.  You can start it using the following command and view the results at http://localhost:8080.
+
+::
+
+  ./scripts/web.py
+
 Tests
 -----
 
@@ -93,7 +100,6 @@ TODO
 
 - save data to S3
 - load data from S3
-- create a flask app
 - make it bootstrap-py
 - deploy to heroku
 - get Travis working

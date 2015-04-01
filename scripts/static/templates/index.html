@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Github Conglomerate</title>
+  </head>
+  <body>
+    <h1>Github Conglomerate</h1>
+    <p>Github repos from lots of organisations in one place</p>
+    <p>This project isn't endorsed by anyone, especially Github</p>
+    <p>If you can think of a better <a href='https://github.com/bewt85/GithubConglomerate/blob/master/github_conglomerate/Views.py'>scoring algorithm</a>, please feel free to make a pull request</p>
+    <table>
+      <thead>
+        <th>Organisation</th>
+        <th>Repo</th>
+        <th>Description</th>
+        <th>score</th>
+      </thead>
+      <tbody>
+      {% for repo in repos %}
+        <tr>
+	  <td><a href='{{ repo['html_url'] }}'>{{ repo['organisation'] }}</a></td>
+	  <td><a href='{{ repo['html_url'] }}'>{{ repo['name'] }}</a></td>
+	  <td><a href='{{ repo['html_url'] }}'>{{ repo['description'] }}</a></td>
+	  <td><a href='{{ repo['html_url'] }}'>{{ '%0.2f' % repo['score'] }}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p>Data collected: {{created_at}}</p>
+  </body>
+</html>  
