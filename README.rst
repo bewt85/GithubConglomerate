@@ -105,7 +105,6 @@ or
 TODO
 ----
 
-- deploy to heroku
 - get Travis working
 - setup a cron job to update the data (daily?)
 - create some more interesting 'views' (newest, recent releases)
