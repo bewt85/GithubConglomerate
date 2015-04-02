@@ -2,14 +2,10 @@ import dateutil.parser
 import json
 
 from datetime import datetime, timedelta
-from math import log
+from math import log, sqrt
 
 now = datetime.now()
-this_week = now - timedelta(days=7)
-this_month = now - timedelta(days=28)
-three_months_ago = now - timedelta(days=90)
-six_months_ago = now - timedelta(days=180)
-this_year = now - timedelta(days=365)
+# global, so we score all repos against the same time
 
 class Repos(object):
 
@@ -53,18 +49,14 @@ class Repos(object):
   def get_date_points(self, when):
     if not isinstance(when, datetime):
       return 0
-    elif when < this_week:
-      return 5
-    elif when < this_month:
-      return 4
-    elif when < three_months_ago:
-      return 3
-    elif when < six_months_ago:
-      return 2
-    elif when < this_year:
-      return 1
     else:
-      return 0
+      age_delta = abs(now - when)
+      # abs: if the repo is somehow in the future, reflect it into the past across now
+      age_hours = age_delta.days * 24 + age_delta.seconds / 3600
+      age_hours += 4 # aiming for stability in the face of very recent times
+      return max(0.25, 5 - sqrt(age_hours) * 2 / 46.5 )
+      # 5        : max score
+      # 2 / 46.5 : scale to lose 2 points at 90 days old
 
   def get_count_points(self, count):
     return int(log(abs(count)+1)*2.1668*100 + 0.5)/100.0
