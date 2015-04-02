@@ -4,12 +4,10 @@ import json
 from datetime import datetime, timedelta
 from math import log, sqrt
 
-now = datetime.now()
-# global, so we score all repos against the same time
-
 class Repos(object):
 
   def __init__(self, json_data='{}'):
+    self.now = datetime.now()
     self.created_at = None
     self.load_json(json_data)
     for repo in self.data:
@@ -49,12 +47,15 @@ class Repos(object):
   def get_date_points(self, when):
     if not isinstance(when, datetime):
       return 0
+    elif when > self.now:
+      # Suspicious but we'll give you the benefit of the doubt
+      return 5.0
     else:
-      age_delta = abs(now - when)
+      age_delta = abs(self.now - when)
       # abs: if the repo is somehow in the future, reflect it into the past across now
       age_hours = age_delta.days * 24 + age_delta.seconds / 3600
       age_hours += 4 # aiming for stability in the face of very recent times
-      return max(0.25, 5 - sqrt(age_hours) * 2 / 46.5 )
+      return max(0, 5 - sqrt(age_hours) * 2 / 46.5 )
       # 5        : max score
       # 2 / 46.5 : scale to lose 2 points at 90 days old
 
