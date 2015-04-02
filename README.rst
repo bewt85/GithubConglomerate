@@ -91,6 +91,14 @@ The web app is pretty simple at the moment.  You can start it using the followin
 
   ./scripts/web.py
 
+You can set a Google Analytics token by creating an environment variable called GA_TOKEN with a token.  On Heroku you'd do this with the following:
+
+::
+
+  heroku config:set GA_TOKEN="<your token here>"
+
+You then want to redeploy the app so that the new config is picked up.
+
 Tests
 -----
 
