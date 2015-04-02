@@ -32,15 +32,15 @@ this_year = now - timedelta(days=365)
 def get_date_points(when):
   if not isinstance(when, datetime):
     return 0
-  elif when < this_week:
+  elif when > this_week:
     return 5
-  elif when < this_month:
+  elif when > this_month:
     return 4
-  elif when < three_months_ago:
+  elif when > three_months_ago:
     return 3
-  elif when < six_months_ago:
+  elif when > six_months_ago:
     return 2
-  elif when < this_year:
+  elif when > this_year:
     return 1
   else:
     return 0
