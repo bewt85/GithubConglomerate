@@ -1,4 +1,4 @@
-from math import log
+from github_conglomerate.Views import Repos
 
 def get_count_points(count):
     if count > 100:
@@ -22,12 +22,8 @@ def get_count_points(count):
     else:
         return 0
 
-def get_count_points_ln(count):
-    return int(log(abs(i)+1)*2.1668*100 + 0.5)/100.0
-    # abs(i) + 1 : now we can work on any int
-    # 2.1668     : factor to match previous step algorithm at 100 => 10.0
-    # then round to 2dp
 
+r = Repos('{ "created_at": "2015-03-30T23:26:03", "repos": [] }')
 for i in range(0, 110):
-    print i, "\t", get_count_points(i), "\t", get_count_points_ln(i)
+    print i, "\t", get_count_points(i), "\t", r.get_count_points(i)
 

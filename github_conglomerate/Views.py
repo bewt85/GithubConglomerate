@@ -2,6 +2,7 @@ import dateutil.parser
 import json
 
 from datetime import datetime, timedelta
+from math import log
 
 now = datetime.now()
 this_week = now - timedelta(days=7)
@@ -66,9 +67,9 @@ class Repos(object):
       return 0
 
   def get_count_points(self, count):
-    return int(log(abs(i)+1)*2.1668*100 + 0.5)/100.0
-    # abs(i) + 1 : now we can work on any int
-    # 2.1668     : factor to match previous step algorithm at 100 => 10.0
+    return int(log(abs(count)+1)*2.1668*100 + 0.5)/100.0
+    # abs(count) + 1 : now we can work on any int
+    # 2.1668         : factor to match previous step algorithm at 100 => 10.0
     # then round to 2dp
 
   def sorted_by(self, repos, *args):
