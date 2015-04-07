@@ -1,6 +1,6 @@
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from github_conglomerate.Views import Repos
 
@@ -79,6 +79,29 @@ class TestRepos(unittest.TestCase):
     ]
 
     self.assertEqual(repos.data, expected_data)
+
+  def test_get_date_points(self):
+    repos = self.uninitialised_repos()
+
+    repos.now = datetime(2000, 1, 1, 0, 0, 0)
+
+    moments_ago = repos.now - timedelta(seconds=1)
+    year_ago = repos.now - timedelta(days=1*365)
+    ten_years_ago = repos.now - timedelta(days=10*365)
+    the_future = repos.now + timedelta(days=1*365)
+
+    self.assertAlmostEqual(repos.get_date_points(moments_ago), 5.0, delta=0.1)
+    self.assertAlmostEqual(repos.get_date_points(year_ago), 1.0, delta=0.1)
+    self.assertAlmostEqual(repos.get_date_points(ten_years_ago), 0.0, delta=0.1)
+    self.assertAlmostEqual(repos.get_date_points(the_future), 5.0, delta=0.1)
+
+  def test_get_count_points(self):
+    repos = self.uninitialised_repos()
+
+    self.assertAlmostEqual(repos.get_count_points(0), 0, delta=0.1)
+    self.assertAlmostEqual(repos.get_count_points(100), 10, delta=0.1)
+    self.assertLess(repos.get_count_points(1000), 15)
+    self.assertGreater(repos.get_count_points(1000), 10)
 
   def test_sorted_by(self):
     repos = self.uninitialised_repos()

@@ -4,12 +4,10 @@ import json
 from datetime import datetime, timedelta
 from math import log, sqrt
 
-now = datetime.now()
-# global, so we score all repos against the same time
-
 class Repos(object):
 
   def __init__(self, json_data='{}'):
+    self.now = datetime.now()
     self.created_at = None
     self.load_json(json_data)
     for repo in self.data:
@@ -48,21 +46,25 @@ class Repos(object):
 
   def get_date_points(self, when):
     if not isinstance(when, datetime):
-      return 0
+      return 0.0
+    elif when > self.now:
+      # Suspicious but we'll give you the benefit of the doubt
+      return 5.0
     else:
-      age_delta = abs(now - when)
-      # abs: if the repo is somehow in the future, reflect it into the past across now
-      age_hours = age_delta.days * 24 + age_delta.seconds / 3600
+      age = self.now - when
+      age_hours = age.days * 24 + age.seconds / 3600
       age_hours += 4 # aiming for stability in the face of very recent times
-      return max(0.25, 5 - sqrt(age_hours) * 2 / 46.5 )
-      # 5        : max score
+      return max(0, 5 - sqrt(age_hours) * 2 / 46.5 )
+      # 5 points if just now
+      # 1 point if a year ago
       # 2 / 46.5 : scale to lose 2 points at 90 days old
 
   def get_count_points(self, count):
-    return int(log(abs(count)+1)*2.1668*100 + 0.5)/100.0
-    # abs(count) + 1 : now we can work on any int
-    # 2.1668         : factor to match previous step algorithm at 100 => 10.0
-    # then round to 2dp
+    # 0 points for count = 0
+    # around 10 points if count = 100
+    # not a lot more for count = 10000
+    # quite a few if count = 1
+    return log(count+1)*2.1668
 
   def sorted_by(self, repos, *args):
     repos = repos[:]
